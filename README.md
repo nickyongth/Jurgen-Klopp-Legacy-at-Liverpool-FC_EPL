@@ -1,5 +1,7 @@
 # Jurgen Klopp's EPL Legacy at Liverpool FC: A Data-Driven Retrospective (2017-Present)
 
+![JurgenKlopp](https://github.com/nickyongth/images-/blob/main/jurgenklopp.png)
+
 ## Project Overview
 
 As Jurgen Klopp's illustrious tenure as manager of Liverpool Football Club draws to a close with his retirement after this season, this project seeks to quantitatively capture and analyze his profound influence on the club's performance in the English Premier League from 2017 to the present. Using SQL and Python, the analysis delves into the myriad ways Klopp has shaped the team’s strategies, player development, and match performances. This retrospective aims to provide a data-backed exploration of Liverpool’s evolution under Klopp’s guidance, reflecting on the tactics, decisions, and player progressions that have marked this era.
