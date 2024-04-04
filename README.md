@@ -1,6 +1,6 @@
 # Jurgen Klopp's EPL Legacy at Liverpool FC: A Data-Driven Retrospective (2017-Present)
 
-![JurgenKlopp](https://github.com/nickyongth/images-/blob/main/jurgenklopp.png)
+![JurgenKlopp](https://github.com/nickyongth/images-/blob/main/jurgenklopp2.jpeg)
 
 ## Project Overview
 
