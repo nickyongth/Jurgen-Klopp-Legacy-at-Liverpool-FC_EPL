@@ -13,10 +13,29 @@ The data for this analysis was scraped from [FBref](https://fbref.com/), a compr
 1. Who are Liverpool FC's most efficient goal scorers in terms of total goals scored, shooting accuracy (as measured by the shots on target percentage), and goal-scoring efficiency (evaluated through the goals to shots ratio) during Klopp's tenure over the last seven EPL seasons?
 
 ````sql
-SELECT 
-  COUNT(DISTINCT id) AS unique_users
-FROM health.user_logs
+WITH player_goal_stats AS (
+    SELECT s.Player, s.Pos,
+           SUM(CAST(`s`.`Performance Gls` AS UNSIGNED)) AS Total_Goals
+    FROM standard_stats_lfc s
+    GROUP BY s.Player, s.Pos
+), player_shooting_stats AS (
+    SELECT sh.Player,
+           SUM(CAST(`sh`.`Standard Sh` AS UNSIGNED)) AS Total_Shots,
+           ROUND(AVG(CAST(`sh`.`Standard SoT%` AS DECIMAL(5,2))), 2) AS Avg_Shots_On_Target_Percentage,
+           ROUND(SUM(CAST(`sh`.`Standard Gls` AS UNSIGNED)) / NULLIF(SUM(CAST(`sh`.`Standard Sh` AS UNSIGNED)), 0), 2) AS Goal_Shot_Ratio
+    FROM shooting_lfc sh
+    GROUP BY sh.Player
+)
+SELECT pg.Player, pg.Pos, pg.Total_Goals,
+       ps.Avg_Shots_On_Target_Percentage, ps.Goal_Shot_Ratio
+FROM player_goal_stats pg
+JOIN player_shooting_stats ps ON pg.Player = ps.Player
+ORDER BY Total_Goals DESC
+LIMIT 10;
 ````
+**Answer:**
+
+(https://github.com/nickyongth/images-/blob/main/query1_answer.png)
 
 
 ## Tools and Technologies
