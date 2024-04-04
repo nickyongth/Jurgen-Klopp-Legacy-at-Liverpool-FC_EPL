@@ -65,6 +65,57 @@ LIMIT 10;
 ````
 **Answer:**
 
+![Query 2 Answer](https://github.com/nickyongth/images-/blob/main/query2_answer.png)
+
+3. Among Liverpool defenders with more than 40 match appearances, who are the top performers in terms of average tackle success rate, shots blocked, interceptions, and errors?
+
+````sql
+WITH ranked_defense AS (
+    SELECT d.Player,
+           ROUND(AVG(CAST(d.`Challenges Tkl%` AS DECIMAL(5,2))), 2) AS Avg_Tackle_Success_Rate,
+           ROUND(AVG(CAST(d.`Blocks Sh` AS UNSIGNED)), 2) AS Avg_Shots_Blocked,
+           ROUND(AVG(CAST(d.`Int` AS UNSIGNED)), 2) AS Avg_Interceptions,		
+           ROUND(AVG(CAST(d.`Err` AS UNSIGNED)), 2) AS Avg_Errors,
+           RANK() OVER (ORDER BY AVG(CAST(d.`Challenges Tkl%` AS DECIMAL(5,2))) DESC, AVG(CAST(d.`Err` AS UNSIGNED)) ASC) AS defense_rank
+    FROM defense_lfc d
+    JOIN (
+        SELECT Player
+        FROM playing_time_lfc
+        WHERE Pos = 'DF'
+        GROUP BY Player
+        HAVING SUM(MP) > 40
+    ) s ON d.Player = s.Player
+    WHERE d.Pos = 'DF'
+    GROUP BY d.Player
+)
+SELECT Player, Avg_Tackle_Success_Rate, Avg_Shots_Blocked, Avg_Interceptions, Avg_Errors
+FROM ranked_defense
+WHERE defense_rank <= 10;
+````
+**Answer:**
+
+![Query 3 Answer](https://github.com/nickyongth/images-/blob/main/query3_answer.png)
+
+4. Who are the top 10 Liverpool players with the highest average goal creation actions (including passes, take-ons, and drawing fouls leading to a goal) and shot creation actions (including passes, take-ons, and drawing fouls leading to a shot) over the past seven seasons?
+
+````sql
+WITH player_averages AS (
+    SELECT gsc.Player, 
+           ROUND(AVG(CAST(gsc.`GCA GCA` AS UNSIGNED)), 2) AS Avg_GCA,
+           ROUND(AVG(CAST(gsc.`SCA SCA` AS UNSIGNED)), 2) AS Avg_SCA,
+           ROUND(AVG(CAST(gsc.`GCA GCA` AS UNSIGNED) + CAST(gsc.`SCA SCA` AS UNSIGNED)), 2) AS Avg_GCA_SCA
+    FROM gsc_lfc gsc
+    GROUP BY gsc.Player
+)
+SELECT Player, Avg_GCA, Avg_SCA, Avg_GCA_SCA
+FROM player_averages
+ORDER BY Avg_GCA_SCA DESC
+LIMIT 10;
+````
+**Answer:**
+
+![Query 4 Answer](https://github.com/nickyongth/images-/blob/main/query4_answer.png)
+
 ## Tools and Technologies
 
 - **Data Collection:** Python for web scraping data from FBref.
