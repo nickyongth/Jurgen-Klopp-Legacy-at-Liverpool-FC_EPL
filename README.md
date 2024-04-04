@@ -35,7 +35,7 @@ LIMIT 10;
 ````
 **Answer:**
 
-!(https://github.com/nickyongth/images-/blob/main/query1_answer.png)
+![Correlation Heatmap](https://github.com/nickyongth/images-/blob/main/query1_answer.png)
 
 
 ## Tools and Technologies
