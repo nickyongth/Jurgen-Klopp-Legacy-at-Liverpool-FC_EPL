@@ -1,8 +1,8 @@
-# Jurgen Klopp's Legacy at Liverpool FC: A Data-Driven Retrospective (2017-Present)
+# Jurgen Klopp's EPL Legacy at Liverpool FC: A Data-Driven Retrospective (2017-Present)
 
 ## Project Overview
 
-As Jurgen Klopp's illustrious tenure as manager of Liverpool Football Club draws to a close with his retirement after this season, this project seeks to quantitatively capture and analyze his profound influence on the club from 2017 to the present. Using SQL and Python, the analysis delves into the myriad ways Klopp has shaped the team’s strategies, player development, and match performances. This retrospective aims to provide a data-backed exploration of Liverpool’s evolution under Klopp’s guidance, reflecting on the tactics, decisions, and player progressions that have marked this era.
+As Jurgen Klopp's illustrious tenure as manager of Liverpool Football Club draws to a close with his retirement after this season, this project seeks to quantitatively capture and analyze his profound influence on the club's performance in the English Premier League from 2017 to the present. Using SQL and Python, the analysis delves into the myriad ways Klopp has shaped the team’s strategies, player development, and match performances. This retrospective aims to provide a data-backed exploration of Liverpool’s evolution under Klopp’s guidance, reflecting on the tactics, decisions, and player progressions that have marked this era.
 
 ## Data Source
 
@@ -35,8 +35,35 @@ LIMIT 10;
 ````
 **Answer:**
 
-![Correlation Heatmap](https://github.com/nickyongth/images-/blob/main/query1_answer.png)
+![Query 1 Answer](https://github.com/nickyongth/images-/blob/main/query1_answer.png)
 
+2. Who are Liverpool's playmakers in terms of average assists, free kick passes, through balls, and crosses over the last seven EPL seasons?
+
+````sql
+WITH player_assists AS (
+    SELECT p.Player, p.Pos,
+           ROUND(AVG(CAST(p.`Ast` AS UNSIGNED)), 2) AS Avg_Assists
+    FROM passing_lfc p
+    GROUP BY p.Player, p.Pos
+), player_pass_types AS (
+    SELECT pt.Player,
+           ROUND(AVG(CAST(pt.`Pass Types FK` AS UNSIGNED)), 2) AS Avg_FK_Passes,
+           ROUND(AVG(CAST(pt.`Pass Types TB` AS UNSIGNED)), 2) AS Avg_Through_Balls,
+           ROUND(AVG(CAST(pt.`Pass Types Crs` AS UNSIGNED)), 2) AS Avg_Crosses
+    FROM pass_type_lfc pt
+    GROUP BY pt.Player
+)
+SELECT pa.Player, pa.Pos, 
+       pa.Avg_Assists,
+       ppt.Avg_FK_Passes,
+       ppt.Avg_Through_Balls,
+       ppt.Avg_Crosses
+FROM player_assists pa
+JOIN player_pass_types ppt ON pa.Player = ppt.Player
+ORDER BY Avg_Assists DESC
+LIMIT 10; 
+````
+**Answer:**
 
 ## Tools and Technologies
 
