@@ -116,6 +116,59 @@ LIMIT 10;
 
 ![Query 4 Answer](https://github.com/nickyongth/images-/blob/main/query4_answer.png)
 
+5. What are Liverpool's home and away game win percentages, and how does the goal difference (goals for vs. goals against) compare in these settings for the last 7 seasons in the EPL?
+
+````sql
+WITH home_stats AS (
+    SELECT season,
+           COUNT(*) AS Home_Matches,
+           COUNT(CASE WHEN Result = 'W' THEN 1 END) AS Home_Wins,
+           SUM(CAST(GF AS UNSIGNED)) AS Home_Goals_For,
+           SUM(CAST(GA AS UNSIGNED)) AS Home_Goals_Against
+    FROM match_lfc
+    WHERE Venue = 'Home'
+    GROUP BY season
+), away_stats AS (
+    SELECT season,
+           COUNT(*) AS Away_Matches,
+           COUNT(CASE WHEN Result = 'W' THEN 1 END) AS Away_Wins,
+           SUM(CAST(GF AS UNSIGNED)) AS Away_Goals_For,
+           SUM(CAST(GA AS UNSIGNED)) AS Away_Goals_Against
+    FROM match_lfc
+    WHERE Venue = 'Away'
+    GROUP BY season
+)
+SELECT hs.season, ROUND(hs.Home_Wins / hs.Home_Matches * 100, 2) AS Home_Win_Percentage,
+       hs.Home_Goals_For - hs.Home_Goals_Against AS Home_Goal_Difference,
+       ROUND(aws.Away_Wins / aws.Away_Matches * 100, 2) AS Away_Win_Percentage,
+       aws.Away_Goals_For - aws.Away_Goals_Against AS Away_Goal_Difference
+FROM home_stats hs
+JOIN away_stats aws ON hs.season = aws.season
+ORDER BY hs.season DESC;
+````
+**Answer:**
+
+![Query 5 Answer](https://github.com/nickyongth/images-/blob/main/query5_answer.png)
+
+6. What is the average ball possession percentage for Liverpool FC by season, and how does it relate to their win percentage in each of those 7 EPL seasons?
+
+````sql
+WITH season_stats AS (
+    SELECT season, 
+           AVG(CAST(Poss AS DECIMAL(5,2))) AS Avg_Possession,
+           SUM(CASE WHEN Result = 'W' THEN 1 ELSE 0 END) / COUNT(*) AS Win_Percentage
+    FROM match_lfc
+    GROUP BY season
+)
+SELECT season, Avg_Possession, ROUND(Win_Percentage * 100, 2) AS Win_Percentage
+FROM season_stats
+ORDER BY Avg_Possession DESC;
+````
+**Answer:**
+
+![Query 6 Answer](https://github.com/nickyongth/images-/blob/main/query6_answer.png)
+
+
 ## Tools and Technologies
 
 - **Data Collection:** Python for web scraping data from FBref.
